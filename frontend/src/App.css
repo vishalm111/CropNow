@@ -75,17 +75,18 @@ body {
   inline-size: 100%;
   min-block-size: 100dvb;
   margin-inline: auto;
-  padding: 1.5rem 1.5rem 2rem;
+  padding: 1.5rem 1.5rem 2.25rem;
   display: flex;
   flex-direction: column;
-  gap: 1.35rem;
+  gap: 1.5rem;
+  box-sizing: border-box;
 }
 
 .dashboard-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.35rem;
+  gap: 1.5rem;
   min-inline-size: 0;
 }
 
@@ -422,8 +423,15 @@ body {
 
 .scenario-description {
   margin: 0;
-  font-size: 0.84rem;
+  font-size: 0.85rem;
   color: var(--color-text-secondary);
+  line-height: 1.45;
+}
+
+.control-hint {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
 }
 
 /* ==========================================================================
@@ -495,9 +503,7 @@ body {
   justify-content: center;
   min-inline-size: 24px;
   min-block-size: 24px;
-  width: 24px;
-  height: 24px;
-  padding: 0;
+  padding: 0 0.35rem;
   border-radius: 9999px;
   border: 1px solid var(--cd-pale-green-border);
   background-color: var(--color-surface);
@@ -520,18 +526,25 @@ body {
   inset-block-start: calc(100% + 6px);
   inset-inline-start: 0;
   z-index: 30;
-  inline-size: min(240px, 68vw);
-  padding: 0.6rem 0.75rem;
+  inline-size: min(250px, calc(100vw - 3rem));
+  padding: 0.65rem 0.8rem;
   border-radius: var(--radius-sm);
   background-color: var(--color-text-primary);
   color: #ffffff;
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1.45;
   text-transform: none;
   letter-spacing: normal;
   box-shadow: var(--shadow-md);
   overflow-wrap: break-word;
+}
+
+@media (pointer: coarse) {
+  .info-tip-btn {
+    min-inline-size: 32px;
+    min-block-size: 32px;
+  }
 }
 
 .simple-sensor-badge {
@@ -1539,10 +1552,55 @@ body {
 
 @media (max-width: 640px) {
   .dashboard-page {
-    padding: 1rem 0.9rem 1.5rem;
+    padding: 0.9rem 0.85rem 1.5rem;
+    gap: 1.15rem;
+  }
+
+  .dashboard-main {
+    gap: 1.15rem;
+  }
+
+  .cropdesk-header-card,
+  .demo-controls-card,
+  .sensor-cards-section,
+  .predictions-card-shell,
+  .graphs-card-shell {
+    padding: 1rem;
+  }
+
+  .control-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .scenario-dropdown,
+  .analyze-btn,
+  .upload-control,
+  .upload-btn-label {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
   }
 
   .simple-sensor-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chart-card {
+    padding: 0.9rem 0.65rem 0.45rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .simple-sensor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tech-header-bar {
+    padding: 0.9rem 1rem;
+  }
+
+  .tech-panel-body {
+    padding: 1rem;
   }
 }

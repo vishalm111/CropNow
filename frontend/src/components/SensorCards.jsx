@@ -14,103 +14,103 @@ export default function SensorCards({
   agriculturalResult,
 }) {
   const count = Array.isArray(activePackets) ? activePackets.length : 0;
-  const hasTelemetry = count > 0;
-  const latestPkt = hasTelemetry ? activePackets[count - 1] : null;
+  const hasReadings = count > 0;
+  const latestPkt = hasReadings ? activePackets[count - 1] : null;
   const latestTimeline = stabilityResult?.timeline?.slice(-1)[0] || null;
 
-  const stabilizedSm =
+  const cleanedSoilWater =
     agriculturalResult?.irrigation?.stabilized_soil_moisture ??
     latestTimeline?.stabilized_average ??
     null;
   const rawSm1 = latestPkt?.soil_moisture_1;
   const rawSm2 = latestPkt?.soil_moisture_2;
   const displaySm =
-    stabilizedSm !== null
-      ? stabilizedSm
+    cleanedSoilWater !== null
+      ? cleanedSoilWater
       : typeof rawSm1 === 'number' && typeof rawSm2 === 'number'
         ? (rawSm1 + rawSm2) / 2
         : null;
 
-  const madp =
+  const targetLevel =
     stabilityResult?.madp_threshold ??
     agriculturalResult?.irrigation?.irrigation_advice?.madp_threshold ??
     null;
 
-  let soilPlainHint = 'Run a demo scenario or upload JSON to view readings.';
+  let soilPlainHint = 'Pick a demo day or upload a file above to see soil water levels.';
   let soilTone = 'neutral';
-  if (hasTelemetry && displaySm !== null) {
-    if (madp !== null && displaySm < madp) {
-      soilPlainHint = `Dry soil (below ${madp}% target). Probes: ${fmt(rawSm1, 1, '%')} / ${fmt(rawSm2, 1, '%')}.`;
+  if (hasReadings && displaySm !== null) {
+    if (targetLevel !== null && displaySm < targetLevel) {
+      soilPlainHint = `Getting dry (below ${targetLevel}% goal). Two soil sensors read ${fmt(rawSm1, 1, '%')} and ${fmt(rawSm2, 1, '%')}.`;
       soilTone = 'warn';
     } else {
-      soilPlainHint = `Healthy moisture level. Probes: ${fmt(rawSm1, 1, '%')} / ${fmt(rawSm2, 1, '%')}.`;
+      soilPlainHint = `Soil has enough water. Two soil sensors read ${fmt(rawSm1, 1, '%')} and ${fmt(rawSm2, 1, '%')}.`;
       soilTone = 'good';
     }
   }
 
-  let tempPlainHint = 'Awaiting sensor data.';
+  let tempPlainHint = 'Waiting for air and soil temperature readings.';
   if (typeof latestPkt?.temperature === 'number') {
     if (latestPkt.temperature >= 32) {
-      tempPlainHint = `Warm air conditions. Soil temp: ${fmt(latestPkt?.soil_temperature, 1, ' °C')}.`;
+      tempPlainHint = `Hot day — soil dries out faster. Soil warmth: ${fmt(latestPkt?.soil_temperature, 1, ' degrees')}.`;
     } else if (latestPkt.temperature <= 18) {
-      tempPlainHint = `Cool air conditions. Soil temp: ${fmt(latestPkt?.soil_temperature, 1, ' °C')}.`;
+      tempPlainHint = `Cool weather — soil dries slowly. Soil warmth: ${fmt(latestPkt?.soil_temperature, 1, ' degrees')}.`;
     } else {
-      tempPlainHint = `Mild field temperature. Soil temp: ${fmt(latestPkt?.soil_temperature, 1, ' °C')}.`;
+      tempPlainHint = `Mild weather for crops. Soil warmth: ${fmt(latestPkt?.soil_temperature, 1, ' degrees')}.`;
     }
   }
 
-  let humPlainHint = 'Awaiting humidity & canopy wetness data.';
+  let humPlainHint = 'Waiting for air moisture and wet-leaf readings.';
   if (typeof latestPkt?.humidity === 'number') {
-    const lwText = fmt(latestPkt?.leaf_wetness, 0, '/100');
+    const lwText = fmt(latestPkt?.leaf_wetness, 0, ' out of 100');
     humPlainHint =
       latestPkt.humidity >= 80
-        ? `Damp air — monitor leaves closely. Leaf wetness: ${lwText}.`
-        : `Moderate air moisture. Leaf wetness: ${lwText}.`;
+        ? `Damp air — check lower leaves often. Leaf wetness: ${lwText}.`
+        : `Normal air moisture. Leaf wetness: ${lwText}.`;
   }
 
-  let rainPlainHint = 'Awaiting rain & sunlight sensors.';
-  if (hasTelemetry) {
-    const solar = fmt(latestPkt?.solar_radiation, 0, ' W/m²');
-    const wind = fmt(latestPkt?.wind_speed, 1, ' m/s');
+  let rainPlainHint = 'Waiting for rain, sunlight, and wind readings.';
+  if (hasReadings) {
+    const solar = fmt(latestPkt?.solar_radiation, 0);
+    const wind = fmt(latestPkt?.wind_speed, 1);
     rainPlainHint =
       typeof latestPkt?.rainfall === 'number' && latestPkt.rainfall > 0
-        ? `Recent rainfall recorded. Light: ${solar} • Wind: ${wind}.`
-        : `Dry window (no rain). Light: ${solar} • Wind: ${wind}.`;
+        ? `Rain recorded recently. Wind: ${wind} meters per second • Sunlight: ${solar}.`
+        : `No rain recently. Wind: ${wind} meters per second • Sunlight: ${solar}.`;
   }
 
   const cards = [
     {
-      label: 'Soil Moisture',
-      tip: 'How wet the soil is around the roots (%). Readings below the crop target mean plants may struggle to take up water.',
+      label: 'Water in the Soil',
+      tip: 'How wet the soil is around plant roots (%). When it drops below your crop goal, plants can soon run short of water.',
       value: fmt(displaySm, 1, '%'),
       sub: soilPlainHint,
-      badge: stabilizedSm !== null ? 'Stabilized' : hasTelemetry ? 'Raw Avg' : 'No Data',
+      badge: cleanedSoilWater !== null ? 'Cleaned' : hasReadings ? 'Raw Average' : 'Waiting',
       tone: soilTone,
     },
     {
-      label: 'Air Temperature',
-      tip: 'Current air warmth in the field (°C). Hot spells dry soil faster; cool humid periods can favor fungal growth.',
+      label: 'Air Warmth',
+      tip: 'Current air temperature in the field (degrees Celsius). Hot weather dries soil faster; cool damp weather can help plant disease grow.',
       value: fmt(latestPkt?.temperature, 1, ' °C'),
       sub: tempPlainHint,
-      badge: hasTelemetry ? 'Live Snapshot' : 'No Data',
+      badge: hasReadings ? 'Latest' : 'Waiting',
       tone: 'neutral',
     },
     {
-      label: 'Humidity & Leaf Wetness',
-      tip: 'Moisture in the air (%) and surface water film on leaves (0–100). Wet leaves over many hours raise fungal disease risk.',
+      label: 'Air Moisture & Wet Leaves',
+      tip: 'How damp the air is (%) and how wet plant leaves feel (0 to 100). Leaves that stay wet for many hours raise the risk of crop disease.',
       value: fmt(latestPkt?.humidity, 0, '%'),
       sub: humPlainHint,
       badge:
-        typeof latestPkt?.humidity === 'number' && latestPkt.humidity >= 80 ? 'High RH' : hasTelemetry ? 'Normal' : 'No Data',
+        typeof latestPkt?.humidity === 'number' && latestPkt.humidity >= 80 ? 'Very Damp' : hasReadings ? 'Normal' : 'Waiting',
       tone: typeof latestPkt?.humidity === 'number' && latestPkt.humidity >= 80 ? 'warn' : 'neutral',
     },
     {
-      label: 'Rainfall & Sunlight',
-      tip: 'Rain measured during the last 30-minute step alongside sunlight intensity (W/m²) and wind speed.',
+      label: 'Rain & Sunlight',
+      tip: 'Rain measured in the last 30 minutes (millimeters), plus sunlight strength and wind speed.',
       value: fmt(latestPkt?.rainfall, 2, ' mm'),
       sub: rainPlainHint,
       badge:
-        typeof latestPkt?.rainfall === 'number' && latestPkt.rainfall > 0 ? 'Rain' : hasTelemetry ? 'Clear' : 'No Data',
+        typeof latestPkt?.rainfall === 'number' && latestPkt.rainfall > 0 ? 'Rain' : hasReadings ? 'Dry' : 'Waiting',
       tone: 'neutral',
     },
   ];
@@ -119,12 +119,12 @@ export default function SensorCards({
     <section aria-labelledby="sensor-cards-heading" className="sensor-cards-section">
       <div className="section-heading-row">
         <h2 id="sensor-cards-heading" className="section-title">
-          Current Field Conditions
+          Latest Field Conditions
         </h2>
         <span className="section-helper">
-          {hasTelemetry
-            ? `Latest reading from packet #${count}`
-            : 'Shown after you run a demo scenario or upload packet JSON'}
+          {hasReadings
+            ? `Showing the newest reading (#${count.toLocaleString()} in this set)`
+            : 'Choose a simulated demo or upload a sensor file above to view readings'}
         </span>
       </div>
 

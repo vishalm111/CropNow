@@ -75,7 +75,7 @@ export default function TechnicalDetails({
             Technical Details
           </h2>
           <span className="tech-subtitle">
-            ML model settings, class probabilities, signal-noise metrics, and raw packet logs
+            Model settings (XGBoost / GRU), EWMA &amp; MADP metrics, and recent sensor readings log
           </span>
         </div>
         <button
@@ -173,7 +173,7 @@ export default function TechnicalDetails({
                 </div>
 
                 <div className="metric-item">
-                  <span className="metric-title">Outlier Suppression</span>
+                  <span className="metric-title">Removal of Unusual Readings</span>
                   <span className="metric-value">
                     {stabilityResult.metrics.outliers_detected_count > 0
                       ? `${stabilityResult.metrics.outlier_suppression_pct.toFixed(1)}%`
@@ -181,8 +181,8 @@ export default function TechnicalDetails({
                   </span>
                   <span className="metric-subtext">
                     {stabilityResult.metrics.outliers_detected_count > 0
-                      ? `${stabilityResult.metrics.outliers_detected_count} fault spikes suppressed`
-                      : '0 isolated spikes detected'}
+                      ? `${stabilityResult.metrics.outliers_detected_count} unusual spikes filtered`
+                      : '0 unusual spikes detected'}
                   </span>
                 </div>
 
@@ -252,8 +252,8 @@ export default function TechnicalDetails({
               <div className="timeline-table-wrapper">
                 <div className="table-caption">
                   <span>
-                    Recent 8 Telemetry Steps (Raw vs Stabilized Readings —{' '}
-                    {dataSourceLabel === 'UPLOADED JSON' ? 'UPLOADED JSON' : 'SYNTHETIC'})
+                    Recent 8 Sensor Readings (Raw vs Cleaned Readings —{' '}
+                    {dataSourceLabel === 'UPLOADED JSON' ? 'UPLOADED FILE' : 'SIMULATED DEMO'})
                   </span>
                   <span
                     className={
@@ -262,7 +262,7 @@ export default function TechnicalDetails({
                         : 'synthetic-badge-subtle'
                     }
                   >
-                    {dataSourceLabel === 'UPLOADED JSON' ? 'UPLOADED' : 'SYNTHETIC'}
+                    {dataSourceLabel === 'UPLOADED JSON' ? 'UPLOADED' : 'SIMULATED'}
                   </span>
                 </div>
                 <table className="timeline-table">

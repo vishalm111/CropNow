@@ -1,19 +1,28 @@
 import React from 'react';
 
 const STATUS_LABELS = {
-  ready: 'READY',
-  insufficient_history: 'INSUFFICIENT HISTORY',
-  blocked: 'BLOCKED',
+  ready: 'Ready',
+  insufficient_history: 'Not Enough Data Yet',
+  blocked: 'Paused (Sensor Issue)',
+};
+
+const RISK_DISPLAY_LABELS = {
+  LOW: 'Low Risk',
+  MEDIUM: 'Medium Risk',
+  HIGH: 'High Risk',
 };
 
 function formatConfidence(confidence, confidenceLevel) {
   if (typeof confidence === 'number' && Number.isFinite(confidence)) {
     const pct = `${(confidence * 100).toFixed(0)}%`;
-    return confidenceLevel && confidenceLevel !== 'unavailable'
-      ? `${pct} (${confidenceLevel.toUpperCase()})`
-      : pct;
+    if (confidenceLevel && confidenceLevel !== 'unavailable') {
+      const level =
+        confidenceLevel.charAt(0).toUpperCase() + confidenceLevel.slice(1).toLowerCase();
+      return `${pct} (${level})`;
+    }
+    return pct;
   }
-  return 'Unavailable (no prediction)';
+  return 'Not available yet';
 }
 
 function getRiskOutcomeClass(status, riskLevel) {
@@ -31,6 +40,16 @@ function getIrrigationOutcomeClass(status, isRequired) {
   return isRequired ? 'outcome-required' : 'outcome-not-required';
 }
 
+function formatWarningText(rawText) {
+  if (rawText.startsWith('OUT_OF_DISTRIBUTION_CLIMATE:')) {
+    return rawText.replace('OUT_OF_DISTRIBUTION_CLIMATE:', 'Weather Difference Notice:');
+  }
+  if (rawText.startsWith('DOMAIN_LIMITATION')) {
+    return rawText.replace(/^DOMAIN_LIMITATION\s*\(([^)]+)\):\s*/, 'Crop Difference ($1): ');
+  }
+  return rawText;
+}
+
 function PacketHistoryMeter({ provided, required, horizonLabel }) {
   const safeProvided = Math.max(0, Number(provided) || 0);
   const safeRequired = Math.max(1, Number(required) || 1);
@@ -41,20 +60,20 @@ function PacketHistoryMeter({ provided, required, horizonLabel }) {
   return (
     <div className="agri-history-block">
       <div className="agri-history-row">
-        <span className="agri-field-label">Required History ({horizonLabel})</span>
+        <span className="agri-field-label">Data Collected ({horizonLabel})</span>
         <span className="agri-history-ratio">
-          {safeProvided.toLocaleString()} / {safeRequired.toLocaleString()} pkts ({pct}%)
+          {safeProvided.toLocaleString()} / {safeRequired.toLocaleString()} readings ({pct}%)
         </span>
       </div>
       <progress
         className="agri-progress"
         value={clampedValue}
         max={safeRequired}
-        aria-label={`Required packet history (${horizonLabel}): ${safeProvided} of ${safeRequired} packets`}
+        aria-label={`Sensor readings collected (${horizonLabel}): ${safeProvided} of ${safeRequired} readings`}
       />
       {missing > 0 && (
         <span className="agri-history-missing">
-          Needs {missing.toLocaleString()} more packets — missing history is never invented.
+          Needs {missing.toLocaleString()} more readings — missing days are never guessed.
         </span>
       )}
     </div>
@@ -70,7 +89,7 @@ function PlainWarningsList({ warnings = [], domainLimitations = [] }) {
     if (text && !seen.has(text)) {
       seen.add(text);
       items.push({
-        text,
+        text: formatWarningText(text),
         isDomain:
           domainLimitations.includes(raw) ||
           text.startsWith('DOMAIN_LIMITATION') ||
@@ -82,7 +101,7 @@ function PlainWarningsList({ warnings = [], domainLimitations = [] }) {
   if (items.length === 0) return null;
 
   return (
-    <ul className="agri-warnings-list" aria-label="Warnings and domain notices">
+    <ul className="agri-warnings-list" aria-label="Warnings and notices">
       {items.map((item, idx) => (
         <li
           key={`${idx}-${item.text.slice(0, 20)}`}
@@ -101,10 +120,8 @@ function RiskCard({
   requiredPackets,
   data,
   totalPacketsReceived,
-  conceptDescription,
   plainSummaryReady,
   nextActionByState,
-  domainPlainNote,
 }) {
   const status = data?.status || 'insufficient_history';
   const ready = Boolean(data?.ready);
@@ -112,59 +129,59 @@ function RiskCard({
   const required = data?.packets_required ?? requiredPackets;
   const riskLevel = ready ? data?.risk_level : null;
 
-  let headlineText = 'INSUFFICIENT HISTORY';
-  let statusMeaning = `Only ${provided.toLocaleString()} of ${required.toLocaleString()} packets (${horizonLabel}) are available, so no risk prediction is shown.`;
+  let headlineText = 'Not Enough Data Yet';
+  let outcomeSub = `${provided.toLocaleString()} of ${required.toLocaleString()} readings (${horizonLabel} needed)`;
+  let statusMeaning = `Needs ${horizonLabel} of steady sensor readings before checking this risk.`;
   let nextAction = nextActionByState.insufficient_history;
 
   if (status === 'blocked') {
-    headlineText = 'BLOCKED';
-    statusMeaning = 'Sensor gaps or faulty values appeared inside this time window, so the result was paused safely.';
+    headlineText = 'Paused for Safety';
+    outcomeSub = 'Missing or faulty sensor values found';
+    statusMeaning = 'Some sensor readings in this window had gaps or errors, so the check was paused safely.';
     nextAction = nextActionByState.blocked;
   } else if (ready && riskLevel) {
-    headlineText = riskLevel;
+    headlineText = RISK_DISPLAY_LABELS[riskLevel] || riskLevel;
+    outcomeSub = `Based on the past ${horizonLabel}`;
     statusMeaning =
-      plainSummaryReady[riskLevel] || `Assessed as ${riskLevel} risk from recent weather patterns.`;
+      plainSummaryReady[riskLevel] || `Recent field weather shows ${riskLevel.toLowerCase()} risk.`;
     nextAction = nextActionByState[riskLevel] || nextActionByState.MEDIUM;
   }
 
   const outcomeClass = getRiskOutcomeClass(status, riskLevel);
+  const hasNotices =
+    (data?.domain_limitations && data.domain_limitations.length > 0) ||
+    (data?.warnings && data.warnings.length > 0);
 
   return (
     <article className={`agri-card status-${status}`}>
       <header className="agri-card-header">
         <div className="agri-card-title-wrap">
           <h3 className="agri-card-title">{title}</h3>
-          <span className="agri-card-sub">{horizonLabel} outlook</span>
+          <span className="agri-card-sub">Past {horizonLabel} check</span>
         </div>
         <span className={`agri-readiness-pill readiness-${status}`}>
-          {STATUS_LABELS[status] || status.toUpperCase()}
+          {STATUS_LABELS[status] || status}
         </span>
       </header>
 
       <div className="agri-card-content">
         <div className={`agri-outcome-box ${outcomeClass}`}>
-          <span className="agri-outcome-kicker">Risk Level</span>
+          <span className="agri-outcome-kicker">Current Result</span>
           <span className="agri-outcome-value">{headlineText}</span>
+          <span className="agri-outcome-note">{outcomeSub}</span>
         </div>
 
-        {/* Farmer-Friendly Meaning & Next Action Box */}
         <div className="agri-meaning-box">
-          <div className="agri-meaning-title">What does this mean?</div>
-          <p className="agri-meaning-text">
-            {conceptDescription} {statusMeaning}
-          </p>
+          <div className="agri-meaning-title">What this means</div>
+          <p className="agri-meaning-text">{statusMeaning}</p>
           <div className="agri-next-action">
-            <strong>Next Action:</strong> {nextAction}
+            <strong>What to do next:</strong> {nextAction}
           </div>
         </div>
 
         <dl className="agri-meta-list">
           <div className="agri-meta-row">
-            <dt>Readiness</dt>
-            <dd>{ready ? 'Ready' : status === 'blocked' ? 'Blocked' : 'Insufficient History'}</dd>
-          </div>
-          <div className="agri-meta-row">
-            <dt>Confidence</dt>
+            <dt>How Sure Is This?</dt>
             <dd>{formatConfidence(data?.confidence, data?.confidence_level)}</dd>
           </div>
         </dl>
@@ -175,19 +192,14 @@ function RiskCard({
           horizonLabel={horizonLabel}
         />
 
-        <div className="agri-alerts-box">
-          <p className="agri-domain-caption">{domainPlainNote}</p>
-          <PlainWarningsList
-            domainLimitations={data?.domain_limitations || []}
-            warnings={
-              data?.warnings && data.warnings.length > 0
-                ? data.warnings
-                : !ready
-                  ? [`${provided.toLocaleString()} of ${required.toLocaleString()} packets provided.`]
-                  : []
-            }
-          />
-        </div>
+        {hasNotices && (
+          <div className="agri-alerts-box">
+            <PlainWarningsList
+              domainLimitations={data?.domain_limitations || []}
+              warnings={data?.warnings || []}
+            />
+          </div>
+        )}
       </div>
     </article>
   );
@@ -203,72 +215,70 @@ function IrrigationCard({ data, totalPacketsReceived }) {
     : false;
   const madp = data?.irrigation_advice?.madp_threshold ?? 20;
 
-  let headlineText = 'INSUFFICIENT HISTORY';
-  let statusMeaning = `Needs 24 hours (${required} half-hour readings) of continuous data before advising on irrigation.`;
-  let nextAction =
-    'Select a 48-packet scenario or let your field station log 24 hours of readings before irrigating automatically.';
+  const currentSm = data?.stabilized_soil_moisture?.toFixed(1) ?? '—';
+  const forecastSm = data?.predicted_soil_moisture_24h?.toFixed(1) ?? '—';
+
+  let headlineText = 'Not Enough Data Yet';
+  let outcomeSub = `${provided.toLocaleString()} of ${required.toLocaleString()} readings (24 hours needed)`;
+  let statusMeaning = 'Needs 1 full day (48 half-hour readings) of soil readings before giving watering advice.';
+  let nextAction = 'Pick a sample day above and click Show Demo Results, or let your field sensor record for 24 hours.';
 
   if (status === 'blocked') {
-    headlineText = 'BLOCKED';
-    statusMeaning =
-      'Watering advice paused because the sensor log includes invalid readings (such as negative humidity or extreme temperature spikes).';
-    nextAction =
-      'Inspect soil/weather sensors for loose wiring and inspect the cleaned probe graph below before irrigating.';
+    headlineText = 'Paused for Safety';
+    outcomeSub = 'Faulty sensor values found';
+    statusMeaning = 'Watering advice stopped safely because the readings include impossible values (like negative air moisture or extreme heat spikes).';
+    nextAction = 'Check the soil and weather sensors for loose wires before watering.';
   } else if (ready) {
-    headlineText = isRequired ? 'REQUIRED' : 'NOT REQUIRED';
+    headlineText = isRequired ? 'Water Crop Soon' : 'No Water Needed Today';
+    outcomeSub = `Now: ${currentSm}% • Tomorrow: ${forecastSm}% (Goal: ${madp}%)`;
     if (isRequired) {
-      statusMeaning = `Root-zone moisture (${data.stabilized_soil_moisture?.toFixed(1) ?? '—'}%) or the 24-hour outlook (${data.predicted_soil_moisture_24h?.toFixed(1) ?? '—'}%) is dipping below your ${madp}% crop comfort floor.`;
-      nextAction = `Schedule or turn on watering soon so root-zone moisture recovers safely above ${madp}%.`;
+      statusMeaning = `Soil water (${currentSm}%) or tomorrow's level (${forecastSm}%) drops below your ${madp}% crop comfort goal.`;
+      nextAction = `Turn on watering or plan irrigation soon so root moisture rises safely above ${madp}%.`;
     } else {
-      statusMeaning = `Current moisture (${data.stabilized_soil_moisture?.toFixed(1) ?? '—'}%) and the 24-hour outlook (${data.predicted_soil_moisture_24h?.toFixed(1) ?? '—'}%) stay comfortably above your ${madp}% threshold.`;
-      nextAction = 'No irrigation needed right now. Check back after the next sensor update.';
+      statusMeaning = `Soil water now (${currentSm}%) and tomorrow's outlook (${forecastSm}%) stay safely above your ${madp}% goal.`;
+      nextAction = 'Keep the water off for now and check again after new readings arrive.';
     }
   }
 
   const outcomeClass = getIrrigationOutcomeClass(status, isRequired);
+  const hasWarnings = data?.warnings && data.warnings.length > 0;
 
   return (
     <article className={`agri-card status-${status}`}>
       <header className="agri-card-header">
         <div className="agri-card-title-wrap">
-          <h3 className="agri-card-title">Irrigation</h3>
-          <span className="agri-card-sub">Next 24h watering guidance</span>
+          <h3 className="agri-card-title">Watering Advice</h3>
+          <span className="agri-card-sub">Next 24 hours check</span>
         </div>
         <span className={`agri-readiness-pill readiness-${status}`}>
-          {STATUS_LABELS[status] || status.toUpperCase()}
+          {STATUS_LABELS[status] || status}
         </span>
       </header>
 
       <div className="agri-card-content">
         <div className={`agri-outcome-box ${outcomeClass}`}>
-          <span className="agri-outcome-kicker">Watering Advice</span>
+          <span className="agri-outcome-kicker">Watering Guidance</span>
           <span className="agri-outcome-value">{headlineText}</span>
+          <span className="agri-outcome-note">{outcomeSub}</span>
         </div>
 
-        {/* Farmer-Friendly Meaning & Next Action Box */}
         <div className="agri-meaning-box">
-          <div className="agri-meaning-title">What does this mean?</div>
-          <p className="agri-meaning-text">
-            Checks how fast your soil is drying over the last 24 hours and forecasts tomorrow&apos;s moisture. {statusMeaning}
-          </p>
+          <div className="agri-meaning-title">What this means</div>
+          <p className="agri-meaning-text">{statusMeaning}</p>
           <div className="agri-next-action">
-            <strong>Next Action:</strong> {nextAction}
+            <strong>What to do next:</strong> {nextAction}
           </div>
         </div>
 
         <dl className="agri-meta-list">
           <div className="agri-meta-row">
-            <dt>Readiness</dt>
-            <dd>{ready ? 'Ready' : status === 'blocked' ? 'Blocked' : 'Insufficient History'}</dd>
-          </div>
-          <div className="agri-meta-row">
-            <dt>Confidence</dt>
+            <dt>How Sure Is This?</dt>
             <dd>{formatConfidence(data?.confidence, data?.confidence_level)}</dd>
           </div>
           {ready && (
             <div className="agri-meta-row">
-              <dt>Valve State</dt>
-              <dd>{data?.actuator_decision ? 'Open (Watering)' : 'Closed (Standby)'}</dd>
+              <dt>Watering Switch</dt>
+              <dd>{data?.actuator_decision ? 'On (Watering)' : 'Off (Closed)'}</dd>
             </div>
           )}
         </dl>
@@ -279,22 +289,11 @@ function IrrigationCard({ data, totalPacketsReceived }) {
           horizonLabel="24 hours"
         />
 
-        <div className="agri-alerts-box">
-          <p className="agri-domain-caption">
-            {data?.unavailable_features?.length
-              ? 'Unavailable field channels (soil EC, pH, deep probe temp, past flow volume) are filled at the training baseline (z=0.0), which can reduce accuracy.'
-              : 'Uses dual soil probe smoothing and 24-hour moisture forecasting.'}
-          </p>
-          <PlainWarningsList
-            warnings={
-              data?.warnings && data.warnings.length > 0
-                ? data.warnings
-                : !ready
-                  ? [`${provided.toLocaleString()} of ${required.toLocaleString()} packets provided.`]
-                  : []
-            }
-          />
-        </div>
+        {hasWarnings && (
+          <div className="agri-alerts-box">
+            <PlainWarningsList warnings={data.warnings} />
+          </div>
+        )}
       </div>
     </article>
   );
@@ -315,47 +314,46 @@ export default function AgriculturalPredictions({
     <section
       className="agri-section"
       aria-labelledby="agri-predictions-heading"
-      aria-live="polite"
     >
       <div className="section-heading-row">
         <div>
           <h2 id="agri-predictions-heading" className="section-title">
-            Farm Predictions &amp; Recommended Actions
+            Farm Advice &amp; Risk Checks
           </h2>
           <p className="section-helper">
-            Clear guidance for watering, fungal disease risk, and insect pests — never guessed when history is short.
+            Simple next steps for watering, crop pests, and crop disease. Missing data is never guessed.
           </p>
         </div>
         <div className="agri-header-badges">
           <span className={isSyntheticSource ? 'synthetic-badge' : 'uploaded-badge'}>
-            {isSyntheticSource ? 'SYNTHETIC DEMO RESULTS' : 'UPLOADED TELEMETRY RESULTS'}
+            {isSyntheticSource ? 'SIMULATED DEMO — NOT LIVE FARM DATA' : 'UPLOADED FILE READINGS'}
           </span>
           {agriculturalResult && (
             <span className="agri-packet-pill">
-              {totalReceived.toLocaleString()} Packets Checked • {cropId}
+              {totalReceived.toLocaleString()} Readings Checked • {cropId.toUpperCase()}
             </span>
           )}
         </div>
       </div>
 
-      {/* Explicit Synthetic vs Real Data & Crop-Domain Notice */}
-      <div className="agri-limitation-banner" role="note" aria-label="Synthetic data and crop-domain limitations">
+      {/* Explicit Simulated Demo & Crop Limitation Notice */}
+      <div className="agri-limitation-banner" role="note" aria-label="Simulated demo notice and limits">
         <div className="agri-limitation-title">
           {isSyntheticSource
-            ? 'Demo Warning: Viewing Synthetic Simulated Results (Not Real Farm Device Readings)'
-            : `Uploaded File Telemetry (${sourceDescription || `${totalReceived} packets`}) — Cross-Crop Caution`}
+            ? 'Simulated Demo Notice: Example Readings Only (Not Live Field Data)'
+            : `Uploaded File Readings (${sourceDescription || `${totalReceived} readings`}) — Check Locally`}
         </div>
         <p className="agri-limitation-summary">
           {isSyntheticSource
-            ? 'Built-in scenarios come from 24-hour synthetic simulations rather than a live NEST sensor station. Because Fungal (7 days) and Pest (28 days) models need longer continuous logs, they honestly display INSUFFICIENT HISTORY instead of inventing numbers. '
-            : 'These uploaded multi-day packets are not verified live NEST chilli station logs unless recorded from your hardware. '}
-          Fungal risk was trained on wild flax rust (10.2–18.9°C) and Pest risk on Rice Black Bug — verify locally before field decisions on <strong>{cropId}</strong>.
+            ? 'These 24-hour examples are computer-made for testing, not live readings from a farm sensor. Because Disease Risk (7 days) and Pest Risk (28 days) need longer logs, they show Not Enough Data Yet instead of guessing. '
+            : 'Uploaded readings are checked over 1 day, 7 days, and 28 days without inventing missing hours. '}
+          Also note: disease and pest checks were trained on other plants (wild flax and rice), so check your <strong>{cropId}</strong> plants directly before taking action.
         </p>
       </div>
 
       {agriculturalError && (
         <div className="health-details error" role="alert">
-          <div className="details-header">Could Not Run Predictions</div>
+          <div className="details-header">Could Not Run Farm Checks</div>
           <p className="error-message">{agriculturalError}</p>
         </div>
       )}
@@ -364,35 +362,33 @@ export default function AgriculturalPredictions({
         <div className="analyzing-banner">
           <div className="spinner-medium" />
           <div className="analyzing-text">
-            <strong>Checking Farm Conditions...</strong>
-            <span>Running Irrigation, Fungal, and Pest checks independently.</span>
+            <strong>Checking Field Conditions...</strong>
+            <span>Checking watering (1 day), crop disease (7 days), and crop pests (28 days).</span>
           </div>
         </div>
       )}
 
       <div className="agri-cards-grid">
         <RiskCard
-          title="Pest Risk"
+          title="Risk of Crop Pests"
           horizonLabel="28 days"
           requiredPackets={1344}
           data={agriculturalResult?.pest_risk}
           totalPacketsReceived={totalReceived}
-          conceptDescription="Looks at 4 full weeks of heat, humidity, rain, wind, and soil wetness to spot conditions when crop-eating insects tend to multiply."
           plainSummaryReady={{
-            LOW: 'Weather over the last 4 weeks suggests low insect pest pressure.',
-            MEDIUM: 'Recent 4-week weather favors moderate insect activity.',
-            HIGH: '4-week warmth and moisture match conditions linked with high insect pest outbreaks.',
+            LOW: 'Weather over the past 4 weeks looks unfavorable for heavy insect pests.',
+            MEDIUM: 'Warmth and moisture over the past 4 weeks allow moderate insect activity.',
+            HIGH: 'Past 4 weeks of weather match conditions tied to high pest outbreaks.',
           }}
           nextActionByState={{
-            LOW: 'Continue routine weekly field walks; no emergency spraying is suggested.',
-            MEDIUM: 'Check leaf undersides and sticky traps twice this week so early pests do not spread.',
-            HIGH: 'Inspect crops across all rows today, verify insect counts on leaves, and consult your agronomist on targeted control.',
+            LOW: 'Keep doing your normal weekly walk-through. No emergency spray needed.',
+            MEDIUM: 'Check the undersides of leaves and traps twice this week for early bugs.',
+            HIGH: 'Walk your rows today to check bug numbers, and ask an advisor before spraying.',
             insufficient_history:
-              'Keep sensors recording until 28 continuous days (1,344 packets) are collected, or upload a 1,344-packet JSON file to test.',
+              'Keep recording until 28 straight days (1,344 readings) are saved, or upload a 28-day file.',
             blocked:
-              'Fix missing or invalid weather readings in the older 4-week log, then re-run.',
+              'Fix missing or faulty weather readings in the older 4-week log, then try again.',
           }}
-          domainPlainNote="Trained on Rice Black Bug in wetland rice (not field-calibrated for chilli pests)."
         />
 
         <IrrigationCard
@@ -401,27 +397,25 @@ export default function AgriculturalPredictions({
         />
 
         <RiskCard
-          title="Fungal Risk"
+          title="Risk of Crop Disease"
           horizonLabel="7 days"
           requiredPackets={336}
           data={agriculturalResult?.fungal_risk}
           totalPacketsReceived={totalReceived}
-          conceptDescription="Tracks the past 7 days of humidity, wet leaves, rain, and temperature swings that allow fungal spores to sprout on foliage."
           plainSummaryReady={{
-            LOW: 'Past 7-day leaf wetness and humidity do not strongly favor fungal spread.',
-            MEDIUM: 'Moisture and humidity over the last 7 days show moderate fungal risk.',
-            HIGH: 'Prolonged dampness and leaf wetness over the last 7 days match high fungal pressure.',
+            LOW: 'Leaf wetness and humidity over the last 7 days do not favor leaf fungus.',
+            MEDIUM: 'Damp air and wet leaves over the last 7 days show moderate disease risk.',
+            HIGH: 'Long wet-leaf and humid hours over the last 7 days raise fungal disease risk.',
           }}
           nextActionByState={{
-            LOW: 'Keep normal field checks and avoid watering foliage late in the evening.',
-            MEDIUM: 'Check shaded lower leaves for early spots or mildew and improve airflow or drainage if crowded.',
-            HIGH: 'Inspect leaves carefully for spots, stem rot, or mold today and consult your agronomist about preventive treatment before more damp weather arrives.',
+            LOW: 'Keep your normal checks and avoid wetting leaves late in the evening.',
+            MEDIUM: 'Look at shaded lower leaves for spots or mold and keep rows well ventilated.',
+            HIGH: 'Inspect leaves closely for spots or rot today and talk to an advisor before more damp weather arrives.',
             insufficient_history:
-              'Keep logging continuously for 7 full days (336 packets), or upload a 336-packet JSON file to test.',
+              'Keep recording for 7 straight days (336 readings), or upload a 7-day file to check disease risk.',
             blocked:
-              'Check humidity, temperature, and leaf-wetness probes for errors in the 7-day log.',
+              'Check your humidity, temperature, and leaf-wetness sensors for errors in the 7-day log.',
           }}
-          domainPlainNote="Trained on cool subalpine wild flax rust (10.2–18.9°C), not chilli fungal diseases."
         />
       </div>
     </section>
