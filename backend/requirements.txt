@@ -1,0 +1,14 @@
+# API & ASGI runtime
+fastapi>=0.110.0,<1.0.0
+uvicorn[standard]>=0.28.0,<1.0.0
+pydantic>=2.9.0,<3.0.0
+
+# Data processing & feature engineering
+numpy>=2.0.0,<2.7.0
+pandas>=2.2.2,<3.0.0
+
+# Model loading & ML inference (bounded to saved artifact compatibility)
+joblib>=1.4.0,<2.0.0
+scikit-learn>=1.9.0,<1.10.0
+xgboost>=3.2.0,<4.0.0
+torch>=2.0.0,<3.0.0

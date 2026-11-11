@@ -1,0 +1,87 @@
+{
+  "overall": {
+    "persistence": {
+      "mae": 0.38273289799690247,
+      "rmse": 0.5469372032756695
+    },
+    "xgb_residual": {
+      "mae": 0.4651305079460144,
+      "rmse": 0.6079796931316978
+    },
+    "gru_residual": {
+      "mae": 0.821906328201294,
+      "rmse": 1.1801022438430757
+    }
+  },
+  "per_zone": {
+    "1": {
+      "crop": "Tomato (Open Field)",
+      "samples": 211,
+      "persistence": {
+        "mae": 0.42441725730895996,
+        "rmse": 0.6504447845728453
+      },
+      "xgb_residual": {
+        "mae": 0.5558991432189941,
+        "rmse": 0.6716671777499252
+      },
+      "gru_residual": {
+        "mae": 0.30109259486198425,
+        "rmse": 0.5559187910288781
+      }
+    },
+    "2": {
+      "crop": "Tomato (Open Field)",
+      "samples": 345,
+      "persistence": {
+        "mae": 0.44231081008911133,
+        "rmse": 0.5199596675031649
+      },
+      "xgb_residual": {
+        "mae": 0.5090871453285217,
+        "rmse": 0.6099690940328679
+      },
+      "gru_residual": {
+        "mae": 0.30566829442977905,
+        "rmse": 0.4261928633601207
+      }
+    },
+    "4": {
+      "crop": "Zucchini (Soil)",
+      "samples": 347,
+      "persistence": {
+        "mae": 0.3185139000415802,
+        "rmse": 0.5441697922753634
+      },
+      "xgb_residual": {
+        "mae": 0.35703474283218384,
+        "rmse": 0.4913191325437936
+      },
+      "gru_residual": {
+        "mae": 0.5380882024765015,
+        "rmse": 0.7846554349837099
+      }
+    },
+    "5": {
+      "crop": "Blueberry (Soil)",
+      "samples": 330,
+      "persistence": {
+        "mae": 0.3613215684890747,
+        "rmse": 0.5031507284089973
+      },
+      "xgb_residual": {
+        "mae": 0.47480326890945435,
+        "rmse": 0.6707074866711246
+      },
+      "gru_residual": {
+        "mae": 1.9930540323257446,
+        "rmse": 2.0416938494475185
+      }
+    }
+  },
+  "models": [
+    "persistence",
+    "xgb_residual",
+    "gru_residual"
+  ]
+}

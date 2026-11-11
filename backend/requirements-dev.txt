@@ -1,0 +1,8 @@
+-r requirements.txt
+
+# Automated API and ML test suite
+pytest>=8.0.0,<10.0.0
+httpx>=0.27.0,<1.0.0
+
+# Offline training & evaluation visualization (lazy-imported only in plot functions)
+matplotlib>=3.8.0,<4.0.0

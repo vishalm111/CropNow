@@ -1,0 +1,229 @@
+{
+  "source_directory": "data\\external\\pest\\fungal_flax_rust",
+  "rows_total_2020_2023_epi": 103,
+  "rows_retained_complete_7d": 70,
+  "rows_skipped_incomplete_window": 33,
+  "skipped_observation_ids": [
+    "BT_2020_d16",
+    "BT_2020_d23",
+    "CC_2020_d14",
+    "CC_2020_d21",
+    "CC_2020_d28",
+    "GM_2020_d15",
+    "GM_2020_d22",
+    "GM_2020_d29",
+    "HM_2020_d17",
+    "HM_2020_d24",
+    "HM_2020_d44",
+    "HM_2020_d50",
+    "HM_2020_d57",
+    "BT_2021_d14",
+    "BT_2021_d21",
+    "CC_2021_d16",
+    "CC_2021_d22",
+    "GM_2021_d15",
+    "HM_2021_d27",
+    "BT_2022_d13",
+    "BT_2022_d20",
+    "CC_2022_d14",
+    "CC_2022_d19",
+    "GM_2022_d15",
+    "GM_2022_d19",
+    "GM_2022_d28",
+    "HM_2022_d35",
+    "HM_2022_d42",
+    "BT_2023_d19",
+    "CC_2023_d21",
+    "GM_2023_d20",
+    "GM_2023_d27",
+    "HM_2023_d29"
+  ],
+  "lookback_window": "[d-7 .. d-1] (strictly prior 7 complete calendar days)",
+  "quantile_definition": {
+    "method": "tertiles computed strictly on training fold prevalence",
+    "q_low": 0.3333333333333333,
+    "q_high": 0.6666666666666666,
+    "LOW": "prevalence <= q33_train",
+    "MEDIUM": "q33_train < prevalence <= q67_train",
+    "HIGH": "prevalence > q67_train"
+  },
+  "loyo_fold_thresholds": {
+    "2020": {
+      "train_years": [
+        2021,
+        2022,
+        2023
+      ],
+      "test_year": 2020,
+      "train_n": 57,
+      "test_n": 13,
+      "q33_low_threshold": 0.048224,
+      "q67_high_threshold": 0.152253,
+      "train_class_counts": {
+        "LOW": 19,
+        "MEDIUM": 19,
+        "HIGH": 19
+      },
+      "test_class_counts": {
+        "MEDIUM": 9,
+        "LOW": 2,
+        "HIGH": 2
+      }
+    },
+    "2021": {
+      "train_years": [
+        2020,
+        2022,
+        2023
+      ],
+      "test_year": 2021,
+      "train_n": 54,
+      "test_n": 16,
+      "q33_low_threshold": 0.064193,
+      "q67_high_threshold": 0.16943,
+      "train_class_counts": {
+        "LOW": 18,
+        "MEDIUM": 18,
+        "HIGH": 18
+      },
+      "test_class_counts": {
+        "LOW": 10,
+        "MEDIUM": 5,
+        "HIGH": 1
+      }
+    },
+    "2022": {
+      "train_years": [
+        2020,
+        2021,
+        2023
+      ],
+      "test_year": 2022,
+      "train_n": 54,
+      "test_n": 16,
+      "q33_low_threshold": 0.047501,
+      "q67_high_threshold": 0.104336,
+      "train_class_counts": {
+        "LOW": 18,
+        "MEDIUM": 18,
+        "HIGH": 18
+      },
+      "test_class_counts": {
+        "HIGH": 12,
+        "LOW": 3,
+        "MEDIUM": 1
+      }
+    },
+    "2023": {
+      "train_years": [
+        2020,
+        2021,
+        2022
+      ],
+      "test_year": 2023,
+      "train_n": 45,
+      "test_n": 25,
+      "q33_low_threshold": 0.04927,
+      "q67_high_threshold": 0.127533,
+      "train_class_counts": {
+        "LOW": 15,
+        "MEDIUM": 15,
+        "HIGH": 15
+      },
+      "test_class_counts": {
+        "HIGH": 10,
+        "MEDIUM": 8,
+        "LOW": 7
+      }
+    }
+  },
+  "loso_fold_thresholds": {
+    "BT": {
+      "train_sites": [
+        "CC",
+        "GM",
+        "HM"
+      ],
+      "test_site": "BT",
+      "train_n": 48,
+      "test_n": 22,
+      "q33_low_threshold": 0.048548,
+      "q67_high_threshold": 0.129542,
+      "train_class_counts": {
+        "LOW": 16,
+        "MEDIUM": 16,
+        "HIGH": 16
+      },
+      "test_class_counts": {
+        "MEDIUM": 9,
+        "HIGH": 8,
+        "LOW": 5
+      }
+    },
+    "CC": {
+      "train_sites": [
+        "BT",
+        "GM",
+        "HM"
+      ],
+      "test_site": "CC",
+      "train_n": 51,
+      "test_n": 19,
+      "q33_low_threshold": 0.052548,
+      "q67_high_threshold": 0.117894,
+      "train_class_counts": {
+        "LOW": 17,
+        "MEDIUM": 17,
+        "HIGH": 17
+      },
+      "test_class_counts": {
+        "HIGH": 9,
+        "LOW": 7,
+        "MEDIUM": 3
+      }
+    },
+    "GM": {
+      "train_sites": [
+        "BT",
+        "CC",
+        "HM"
+      ],
+      "test_site": "GM",
+      "train_n": 51,
+      "test_n": 19,
+      "q33_low_threshold": 0.043141,
+      "q67_high_threshold": 0.114001,
+      "train_class_counts": {
+        "LOW": 17,
+        "MEDIUM": 17,
+        "HIGH": 17
+      },
+      "test_class_counts": {
+        "HIGH": 11,
+        "MEDIUM": 6,
+        "LOW": 2
+      }
+    },
+    "HM": {
+      "train_sites": [
+        "BT",
+        "CC",
+        "GM"
+      ],
+      "test_site": "HM",
+      "train_n": 60,
+      "test_n": 10,
+      "q33_low_threshold": 0.068758,
+      "q67_high_threshold": 0.163911,
+      "train_class_counts": {
+        "LOW": 20,
+        "MEDIUM": 20,
+        "HIGH": 20
+      },
+      "test_class_counts": {
+        "LOW": 9,
+        "MEDIUM": 1
+      }
+    }
+  }
+}

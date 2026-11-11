@@ -1,0 +1,74 @@
+{
+  "overall": {
+    "xgboost": {
+      "val_mae": 2.6822879314422607,
+      "val_rmse": 4.075197535682655,
+      "test_mae": 6.439627170562744,
+      "test_rmse": 8.849675973251392
+    },
+    "gru": {
+      "val_mae": 1.8231477737426758,
+      "val_rmse": 2.6439251564386463,
+      "test_mae": 5.783626556396484,
+      "test_rmse": 7.71606324420202
+    }
+  },
+  "per_zone": {
+    "1": {
+      "name": "Tomato (Open Field)",
+      "test_samples": 211,
+      "xgboost": {
+        "mae": 0.16452015936374664,
+        "rmse": 0.19109724364436265,
+        "agronomic_class_acc": 100.0
+      },
+      "gru": {
+        "mae": 0.48627275228500366,
+        "rmse": 0.6145325305652831,
+        "agronomic_class_acc": 75.82938388625593
+      }
+    },
+    "2": {
+      "name": "Tomato (Open Field)",
+      "test_samples": 345,
+      "xgboost": {
+        "mae": 0.8027665019035339,
+        "rmse": 0.8151033216640655,
+        "agronomic_class_acc": 100.0
+      },
+      "gru": {
+        "mae": 1.20909583568573,
+        "rmse": 1.7045957881547382,
+        "agronomic_class_acc": 100.0
+      }
+    },
+    "4": {
+      "name": "Zucchini (Soil)",
+      "test_samples": 347,
+      "xgboost": {
+        "mae": 7.5658745765686035,
+        "rmse": 7.651378093582687,
+        "agronomic_class_acc": 99.13544668587896
+      },
+      "gru": {
+        "mae": 7.366860866546631,
+        "rmse": 8.00154623347668,
+        "agronomic_class_acc": 96.25360230547551
+      }
+    },
+    "5": {
+      "name": "Blueberry (Soil)",
+      "test_samples": 330,
+      "xgboost": {
+        "mae": 15.160709381103516,
+        "rmse": 15.177037532460634,
+        "agronomic_class_acc": 100.0
+      },
+      "gru": {
+        "mae": 12.28839111328125,
+        "rmse": 12.322825792912148,
+        "agronomic_class_acc": 100.0
+      }
+    }
+  }
+}

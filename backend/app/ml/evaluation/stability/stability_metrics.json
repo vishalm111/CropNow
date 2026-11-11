@@ -1,0 +1,182 @@
+{
+  "scenario_01_normal.csv": {
+    "scenario": "scenario_01_normal.csv",
+    "title": "Scenario 1: Normal Diurnal Cycle",
+    "crop": "chilli",
+    "madp_threshold": 20.0,
+    "noise_reduction": {
+      "total_variation_raw": 1.84,
+      "total_variation_filtered": 1.626,
+      "total_variation_reduction_pct": 11.63,
+      "high_frequency_variance_raw": 0.0016,
+      "high_frequency_variance_filtered": 0.0001,
+      "high_frequency_reduction_pct": 96.22,
+      "probe1_tv_reduction_pct": 7.41,
+      "probe2_tv_reduction_pct": 17.81,
+      "outlier_suppression_pct": 0.0,
+      "outliers_detected_count": 0
+    },
+    "event_preservation": {
+      "raw_dynamic_range": 1.69,
+      "clean_baseline_range": 1.69,
+      "filtered_dynamic_range": 1.626,
+      "range_retention_pct": 96.21,
+      "max_raw_single_step": 0.125,
+      "max_filtered_single_step": 0.081,
+      "sudden_events_detected": 0
+    },
+    "response_delay": {
+      "estimated_lag_minutes": 120.0,
+      "effective_sampling_steps_lag": 4.0
+    },
+    "actuator_switching": {
+      "raw_switch_count": 0,
+      "filtered_switch_count": 0,
+      "switch_reduction_pct": 0.0
+    }
+  },
+  "scenario_02_sensor_noise.csv": {
+    "scenario": "scenario_02_sensor_noise.csv",
+    "title": "Scenario 2: Sensor Noise & Spikes",
+    "crop": "chilli",
+    "madp_threshold": 20.0,
+    "noise_reduction": {
+      "total_variation_raw": 200.615,
+      "total_variation_filtered": 1.566,
+      "total_variation_reduction_pct": 99.22,
+      "high_frequency_variance_raw": 798.1953,
+      "high_frequency_variance_filtered": 0.0001,
+      "high_frequency_reduction_pct": 100.0,
+      "probe1_tv_reduction_pct": 99.17,
+      "probe2_tv_reduction_pct": 99.26,
+      "outlier_suppression_pct": 99.8,
+      "outliers_detected_count": 2
+    },
+    "event_preservation": {
+      "raw_dynamic_range": 100.0,
+      "clean_baseline_range": 1.735,
+      "filtered_dynamic_range": 1.566,
+      "range_retention_pct": 90.26,
+      "max_raw_single_step": 74.035,
+      "max_filtered_single_step": 0.076,
+      "sudden_events_detected": 0
+    },
+    "response_delay": {
+      "estimated_lag_minutes": 0.0,
+      "effective_sampling_steps_lag": 0.0
+    },
+    "actuator_switching": {
+      "raw_switch_count": 2,
+      "filtered_switch_count": 0,
+      "switch_reduction_pct": 100.0
+    }
+  },
+  "scenario_03_gradual_drying.csv": {
+    "scenario": "scenario_03_gradual_drying.csv",
+    "title": "Scenario 3: Gradual Soil Drying",
+    "crop": "chilli",
+    "madp_threshold": 20.0,
+    "noise_reduction": {
+      "total_variation_raw": 15.845,
+      "total_variation_filtered": 14.431,
+      "total_variation_reduction_pct": 8.92,
+      "high_frequency_variance_raw": 0.0071,
+      "high_frequency_variance_filtered": 0.0004,
+      "high_frequency_reduction_pct": 94.02,
+      "probe1_tv_reduction_pct": 9.05,
+      "probe2_tv_reduction_pct": 8.81,
+      "outlier_suppression_pct": 0.0,
+      "outliers_detected_count": 0
+    },
+    "event_preservation": {
+      "raw_dynamic_range": 15.845,
+      "clean_baseline_range": 15.845,
+      "filtered_dynamic_range": 14.431,
+      "range_retention_pct": 91.08,
+      "max_raw_single_step": 0.435,
+      "max_filtered_single_step": 0.36,
+      "sudden_events_detected": 0
+    },
+    "response_delay": {
+      "estimated_lag_minutes": 150.0,
+      "effective_sampling_steps_lag": 5.0
+    },
+    "actuator_switching": {
+      "raw_switch_count": 1,
+      "filtered_switch_count": 0,
+      "switch_reduction_pct": 100.0
+    }
+  },
+  "scenario_04_irrigation_event.csv": {
+    "scenario": "scenario_04_irrigation_event.csv",
+    "title": "Scenario 4: Irrigation Infiltration",
+    "crop": "chilli",
+    "madp_threshold": 20.0,
+    "noise_reduction": {
+      "total_variation_raw": 20.4,
+      "total_variation_filtered": 18.497,
+      "total_variation_reduction_pct": 9.33,
+      "high_frequency_variance_raw": 0.3607,
+      "high_frequency_variance_filtered": 0.5231,
+      "high_frequency_reduction_pct": -45.02,
+      "probe1_tv_reduction_pct": 11.72,
+      "probe2_tv_reduction_pct": 6.58,
+      "outlier_suppression_pct": 0.0,
+      "outliers_detected_count": 0
+    },
+    "event_preservation": {
+      "raw_dynamic_range": 16.81,
+      "clean_baseline_range": 16.81,
+      "filtered_dynamic_range": 16.058,
+      "range_retention_pct": 95.53,
+      "max_raw_single_step": 2.935,
+      "max_filtered_single_step": 4.4,
+      "sudden_events_detected": 5
+    },
+    "response_delay": {
+      "estimated_lag_minutes": 60.0,
+      "effective_sampling_steps_lag": 2.0
+    },
+    "actuator_switching": {
+      "raw_switch_count": 1,
+      "filtered_switch_count": 1,
+      "switch_reduction_pct": 0.0
+    }
+  },
+  "scenario_05_high_humidity.csv": {
+    "scenario": "scenario_05_high_humidity.csv",
+    "title": "Scenario 5: High Humidity & Leaf Wetness",
+    "crop": "chilli",
+    "madp_threshold": 20.0,
+    "noise_reduction": {
+      "total_variation_raw": 1.02,
+      "total_variation_filtered": 0.374,
+      "total_variation_reduction_pct": 63.33,
+      "high_frequency_variance_raw": 0.0015,
+      "high_frequency_variance_filtered": 0.0,
+      "high_frequency_reduction_pct": 98.34,
+      "probe1_tv_reduction_pct": 63.85,
+      "probe2_tv_reduction_pct": 65.64,
+      "outlier_suppression_pct": 0.0,
+      "outliers_detected_count": 0
+    },
+    "event_preservation": {
+      "raw_dynamic_range": 0.16,
+      "clean_baseline_range": 0.16,
+      "filtered_dynamic_range": 0.125,
+      "range_retention_pct": 78.12,
+      "max_raw_single_step": 0.065,
+      "max_filtered_single_step": 0.021,
+      "sudden_events_detected": 0
+    },
+    "response_delay": {
+      "estimated_lag_minutes": 120.0,
+      "effective_sampling_steps_lag": 4.0
+    },
+    "actuator_switching": {
+      "raw_switch_count": 0,
+      "filtered_switch_count": 0,
+      "switch_reduction_pct": 0.0
+    }
+  }
+}

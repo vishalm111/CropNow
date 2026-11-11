@@ -1,0 +1,75 @@
+{
+  "feature_cols": [
+    "weather_temp",
+    "weather_humidity",
+    "weather_rain",
+    "weather_pressure",
+    "weather_wind_speed",
+    "weather_radiation",
+    "soil_temperature_0-7cm",
+    "soil_temperature_7-18cm",
+    "ec",
+    "ph",
+    "soil_moisture",
+    "irrigation_duration_minutes",
+    "water_vol_past_4h"
+  ],
+  "static_cols": [
+    "flow_rate",
+    "pwp",
+    "madp",
+    "fc",
+    "sp"
+  ],
+  "sequence_length": 48,
+  "sampling_minutes": 30,
+  "boundary_gap_hours": 24,
+  "target_col": "target_mean_24h",
+  "zones_included": [
+    1,
+    2,
+    4,
+    5
+  ],
+  "zones_excluded": [
+    3
+  ],
+  "crop_specs": {
+    "1": {
+      "name": "Tomato (Open Field)",
+      "soil_model": "TOMATO_SOIL",
+      "flow_rate": 1.1,
+      "pwp": 20.0,
+      "madp": 40.0,
+      "fc": 60.0,
+      "sp": 80.0
+    },
+    "2": {
+      "name": "Tomato (Open Field)",
+      "soil_model": "TOMATO_SOIL",
+      "flow_rate": 1.1,
+      "pwp": 20.0,
+      "madp": 40.0,
+      "fc": 60.0,
+      "sp": 80.0
+    },
+    "4": {
+      "name": "Zucchini (Soil)",
+      "soil_model": "ZUCCHINI_SOIL",
+      "flow_rate": 1.1,
+      "pwp": 40.0,
+      "madp": 80.0,
+      "fc": 90.0,
+      "sp": 95.0
+    },
+    "5": {
+      "name": "Blueberry (Soil)",
+      "soil_model": "BLUEBERRY_SOIL",
+      "flow_rate": 0.4,
+      "pwp": 35.0,
+      "madp": 70.0,
+      "fc": 90.0,
+      "sp": 95.0
+    }
+  }
+}

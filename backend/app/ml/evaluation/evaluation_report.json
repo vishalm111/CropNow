@@ -1,0 +1,325 @@
+{
+  "overall": {
+    "persistence": {
+      "mae": 0.38273289799690247,
+      "rmse": 0.5469372032756695
+    },
+    "xgboost": {
+      "mae": 6.439627170562744,
+      "rmse": 8.849675973251392
+    },
+    "gru": {
+      "mae": 5.783626556396484,
+      "rmse": 7.71606324420202
+    }
+  },
+  "per_zone": {
+    "1": {
+      "crop": "Tomato (Open Field)",
+      "samples": 211,
+      "persistence": {
+        "mae": 0.42441725730895996,
+        "rmse": 0.6504447845728453
+      },
+      "xgboost": {
+        "mae": 0.16452015936374664,
+        "rmse": 0.19109724364436265
+      },
+      "gru": {
+        "mae": 0.48627275228500366,
+        "rmse": 0.6145325305652831
+      }
+    },
+    "2": {
+      "crop": "Tomato (Open Field)",
+      "samples": 345,
+      "persistence": {
+        "mae": 0.44231081008911133,
+        "rmse": 0.5199596675031649
+      },
+      "xgboost": {
+        "mae": 0.8027665019035339,
+        "rmse": 0.8151033216640655
+      },
+      "gru": {
+        "mae": 1.20909583568573,
+        "rmse": 1.7045957881547382
+      }
+    },
+    "4": {
+      "crop": "Zucchini (Soil)",
+      "samples": 347,
+      "persistence": {
+        "mae": 0.3185139000415802,
+        "rmse": 0.5441697922753634
+      },
+      "xgboost": {
+        "mae": 7.5658745765686035,
+        "rmse": 7.651378093582687
+      },
+      "gru": {
+        "mae": 7.366860866546631,
+        "rmse": 8.00154623347668
+      }
+    },
+    "5": {
+      "crop": "Blueberry (Soil)",
+      "samples": 330,
+      "persistence": {
+        "mae": 0.3613215684890747,
+        "rmse": 0.5031507284089973
+      },
+      "xgboost": {
+        "mae": 15.160709381103516,
+        "rmse": 15.177037532460634
+      },
+      "gru": {
+        "mae": 12.28839111328125,
+        "rmse": 12.322825792912148
+      }
+    }
+  },
+  "classification": {
+    "multiclass": {
+      "persistence": {
+        "accuracy": 95.1338199513382,
+        "balanced_accuracy": 96.61399548532732,
+        "weighted_precision": 95.8511929314849,
+        "weighted_recall": 95.1338199513382,
+        "weighted_f1": 95.24216269548664,
+        "macro_precision": 92.62899262899262,
+        "macro_recall": 96.61399548532732,
+        "macro_f1": 94.26888371055307,
+        "confusion_matrix": [
+          [
+            826,
+            60,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            347,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "xgboost": {
+        "accuracy": 99.7566909975669,
+        "balanced_accuracy": 99.56772334293949,
+        "weighted_precision": 99.75751206281697,
+        "weighted_recall": 99.7566909975669,
+        "weighted_f1": 99.75636844365404,
+        "macro_precision": 99.8312710911136,
+        "macro_recall": 99.56772334293949,
+        "macro_f1": 99.69841625731233,
+        "confusion_matrix": [
+          [
+            886,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            3,
+            344,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "gru": {
+        "accuracy": 94.80940794809408,
+        "balanced_accuracy": 95.24869731526597,
+        "weighted_precision": 95.1704151714481,
+        "weighted_recall": 94.80940794809408,
+        "weighted_f1": 94.88726143090035,
+        "macro_precision": 92.61011394266112,
+        "macro_recall": 95.24869731526597,
+        "macro_f1": 93.78297124056951,
+        "confusion_matrix": [
+          [
+            835,
+            51,
+            0,
+            0,
+            0
+          ],
+          [
+            13,
+            334,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    "binary": {
+      "persistence": {
+        "accuracy": 100.0,
+        "balanced_accuracy": 100.0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1233
+          ]
+        ]
+      },
+      "xgboost": {
+        "accuracy": 100.0,
+        "balanced_accuracy": 100.0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1233
+          ]
+        ]
+      },
+      "gru": {
+        "accuracy": 100.0,
+        "balanced_accuracy": 100.0,
+        "precision": 100.0,
+        "recall": 100.0,
+        "f1": 100.0,
+        "confusion_matrix": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1233
+          ]
+        ]
+      }
+    }
+  },
+  "switching_frequency": {
+    "consecutive_pairs_evaluated": 1229,
+    "multiclass_switch_rate": {
+      "ground_truth": 0.0,
+      "persistence": 0.9764035801464606,
+      "xgboost": 0.4882017900732303,
+      "gru": 0.7323026851098454
+    },
+    "binary_switch_rate": {
+      "ground_truth": 0.0,
+      "persistence": 0.0,
+      "xgboost": 0.0,
+      "gru": 0.0
+    }
+  },
+  "class_distributions": {
+    "ground_truth": {
+      "Danger": 71.8572587185726,
+      "Stress": 28.142741281427412,
+      "Optimal": 0.0,
+      "Excess": 0.0,
+      "Saturation": 0.0
+    },
+    "persistence": {
+      "Danger": 66.99107866991079,
+      "Stress": 33.008921330089215,
+      "Optimal": 0.0,
+      "Excess": 0.0,
+      "Saturation": 0.0
+    },
+    "xgboost": {
+      "Danger": 72.10056772100569,
+      "Stress": 27.899432278994325,
+      "Optimal": 0.0,
+      "Excess": 0.0,
+      "Saturation": 0.0
+    },
+    "gru": {
+      "Danger": 68.77534468775345,
+      "Stress": 31.22465531224655,
+      "Optimal": 0.0,
+      "Excess": 0.0,
+      "Saturation": 0.0
+    }
+  }
+}

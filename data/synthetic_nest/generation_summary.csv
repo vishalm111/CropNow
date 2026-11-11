@@ -1,0 +1,6 @@
+scenario,rows,columns,gt_irrigate_pct,gt_fault_pct,label_dist,file
+scenario_01_normal,48,29,0.0%,0.0%,{'NORMAL': 48},scenario_01_normal.csv
+scenario_02_sensor_noise,48,29,2.1%,12.5%,"{'NORMAL': 42, 'SENSOR_FAULT': 6}",scenario_02_sensor_noise.csv
+scenario_03_gradual_drying,48,29,12.5%,0.0%,"{'NORMAL': 42, 'IRRIGATE': 6}",scenario_03_gradual_drying.csv
+scenario_04_irrigation_event,48,29,20.8%,0.0%,"{'NORMAL': 38, 'IRRIGATE': 10}",scenario_04_irrigation_event.csv
+scenario_05_high_humidity,48,29,0.0%,0.0%,{'NORMAL': 48},scenario_05_high_humidity.csv

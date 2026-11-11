@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+*.so
+.Python
+env/
+ENV/
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Node / Frontend
+node_modules/
+dist/
+.dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Excluded local/external datasets without clear public redistribution license
+data/external/pest/weekly_lot_a_with_moon_dataset.csv
+data/external/pest/RBB_P75.1_binary_labels.csv
+data/external/pest/WSB_P94.3_binary_labels.csv
+data/processed/pest_risk/
+data/external/pest/fungal/Grape Disease Dataset/
+# Large raw irrigation datasets - retained locally, excluded from GitHub
+/data/Soil Moisture, Irrigation Actuator and Weather Dat/Soil Moisture, Irrigation Actuator and Weather Dat/01_raw_data/raw_irrigation_actuators/raw_actuators.csv
+/data/Soil Moisture, Irrigation Actuator and Weather Dat/Soil Moisture, Irrigation Actuator and Weather Dat/01_raw_data/raw_irrigation_actuators/raw_measurements.csv
+
+# Company-provided sample - keep local unless redistribution is authorized
+/data/company_sample/nest_sample.json
